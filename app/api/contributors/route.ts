@@ -1,5 +1,42 @@
 import { NextResponse } from "next/server"
 
+// Define the contributor type from your backend
+interface BackendContributor {
+  _id: string
+  githubUsername: string
+  githubId: number
+  name: string | null
+  email: string | null
+  avatarUrl: string
+  profileUrl: string
+  totalXpEarned: number
+  rewardEligible: boolean
+  rewardClaimed: boolean
+  totalMergedIssues: number
+  totalMergedPRs: number
+  lastContributionAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+interface BackendResponse {
+  success: boolean
+  count: number
+  data: BackendContributor[]
+}
+
+interface FrontendContributor {
+  githubName: string
+  username: string
+  githubUrl: string
+  currentXp: number
+  mergedPrs: number
+  avatarUrl: string
+  rewardEligible: boolean
+  rewardClaimed: boolean
+  totalMergedIssues: number
+}
+
 export async function GET() {
   try {
     // Fetch contributors from your backend API
@@ -8,7 +45,6 @@ export async function GET() {
       headers: {
         'Content-Type': 'application/json'
       },
-      // Add cache options if needed
       cache: 'no-store' // or 'force-cache' for caching
     });
 
@@ -16,10 +52,10 @@ export async function GET() {
       throw new Error(`Failed to fetch contributors: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data: BackendResponse = await response.json();
 
     // Transform the data to match your frontend structure
-    const contributors = data.data.map((contributor: any) => ({
+    const contributors: FrontendContributor[] = data.data.map((contributor) => ({
       githubName: contributor.name || contributor.githubUsername,
       username: contributor.githubUsername,
       githubUrl: contributor.profileUrl,
@@ -37,14 +73,15 @@ export async function GET() {
       contributors 
     });
 
-  } catch (error: any) {
-    console.error('Error fetching contributors:', error);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    console.error('Error fetching contributors:', errorMessage);
     
     return NextResponse.json(
       { 
         success: false,
         error: 'Failed to fetch contributors',
-        message: error.message 
+        message: errorMessage
       },
       { status: 500 }
     );
