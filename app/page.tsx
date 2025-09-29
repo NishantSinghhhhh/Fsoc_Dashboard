@@ -1,17 +1,15 @@
 import { DashboardHeader } from "@/components/dashboard-header"
 import { ContributorsTable } from "@/components/contributors-table"
+import { Footer } from "@/components/footer"
 
-export default function Page() {
+export default function Home() {
   return (
-    <main className="w-full">
+    <div className="min-h-screen flex flex-col">
       <DashboardHeader />
-      <section className="px-6 md:px-10 mt-6">
-        <div className="rounded-none border bg-card text-card-foreground shadow-sm">
-          <div className="p-4 md:p-6">
-            <ContributorsTable />
-          </div>
-        </div>
-      </section>
-    </main>
+      <main className="flex-1 container mx-auto py-8 px-4">
+        <ContributorsTable />
+      </main>
+      <Footer />
+    </div>
   )
 }
